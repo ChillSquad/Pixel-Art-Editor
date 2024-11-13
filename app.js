@@ -32,25 +32,58 @@ function createPixel(pixelSize) {
   const pixel = document.createElement("div");
   setSquaredSize(pixel, pixelSize);
   pixel.classList.add("pixel");
-  pixel.addEventListener(
-    "click",
-    () => (pixel.style.backgroundColor = selectedColor)
-  );
+  pixel.addEventListener("click", () => {
+    pixel.style.backgroundColor = selectedColor;
+  });
   return pixel;
 }
 
-function createRow(quantityOfPixels, gridSize, pixelSize) {
-  const row = document.createElement("div");
-  row.style.width = gridSize + "px";
-  row.style.height = pixelSize + "px";
-  row.classList.add("row");
+function getAlphabetLetter(index) {
+  return String.fromCharCode(65 + index);
+}
 
-  for (let columnIndex = 0; columnIndex < quantityOfPixels; columnIndex++) {
-    const pixel = createPixel(pixelSize);
-    if (!gridVisible) pixel.classList.add("no-border");
-    row.appendChild(pixel);
+function createPixelsContainer(pixelsContainer, quantityOfPixels, pixelSize) {
+  pixelsContainer.innerHTML = "";
+  const gridSize = quantityOfPixels * pixelSize;
+
+  const headerRow = document.createElement("div");
+  headerRow.classList.add("row");
+  headerRow.style.width = gridSize + pixelSize + "px";
+
+  const emptyCorner = document.createElement("div");
+  setSquaredSize(emptyCorner, pixelSize);
+  emptyCorner.classList.add("header-cell");
+  headerRow.appendChild(emptyCorner);
+
+  for (let i = 0; i < quantityOfPixels; i++) {
+    const headerCell = document.createElement("div");
+    headerCell.classList.add("header-cell");
+    headerCell.textContent = i + 1;
+    setSquaredSize(headerCell, pixelSize);
+    headerRow.appendChild(headerCell);
   }
-  return row;
+
+  pixelsContainer.appendChild(headerRow);
+
+  for (let rowIndex = 0; rowIndex < quantityOfPixels; rowIndex++) {
+    const row = document.createElement("div");
+    row.classList.add("row");
+    row.style.width = gridSize + pixelSize + "px";
+
+    const rowHeader = document.createElement("div");
+    rowHeader.classList.add("header-cell");
+    rowHeader.textContent = getAlphabetLetter(rowIndex);
+    setSquaredSize(rowHeader, pixelSize);
+    row.appendChild(rowHeader);
+
+    for (let columnIndex = 0; columnIndex < quantityOfPixels; columnIndex++) {
+      const pixel = createPixel(pixelSize);
+      if (!gridVisible) pixel.classList.add("no-border");
+      row.appendChild(pixel);
+    }
+
+    pixelsContainer.appendChild(row);
+  }
 }
 
 function createColorPickerContainer(colorPickerContainer, colors) {
@@ -71,16 +104,6 @@ function createColorPickerContainer(colorPickerContainer, colors) {
     });
 
     colorPickerContainer.appendChild(colorPick);
-  }
-}
-
-function createPixelsContainer(pixelsContainer, quantityOfPixels, pixelSize) {
-  const gridSize = quantityOfPixels * pixelSize;
-  setSquaredSize(pixelsContainer, gridSize);
-
-  for (let rowIndex = 0; rowIndex < quantityOfPixels; rowIndex++) {
-    const row = createRow(quantityOfPixels, gridSize, pixelSize);
-    pixelsContainer.appendChild(row);
   }
 }
 
@@ -114,12 +137,28 @@ window.addEventListener("load", () => {
 });
 
 quantityOfPixelsInput.addEventListener("change", (e) => {
-  quantityOfPixels = parseInt(e.target.value);
+  const inputValue = parseInt(e.target.value);
+
+  if (inputValue > 26) {
+    quantityOfPixelsInput.value = 26;
+    quantityOfPixels = 26;
+  } else {
+    quantityOfPixels = inputValue;
+  }
+
   refreshPixelsContainer();
 });
 
 sizeOfPixelInput.addEventListener("change", (e) => {
-  pixelSize = parseInt(e.target.value);
+  inputValue = parseInt(e.target.value);
+
+  if (inputValue < 20) {
+    sizeOfPixelInput.value = 20;
+    pixelSize = 20;
+  } else {
+    pixelSize = inputValue;
+  }
+
   refreshPixelsContainer();
 });
 

@@ -114,3 +114,14 @@ label {
 .row {
   display: flex;
 }
+
+.header-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-sizing: border-box;
+  border: 1px solid #5f5f5f;
+  pointer-events: none;
+  user-select: none;
+}
