@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Art Editor</title>
+    <link rel="stylesheet" href="main.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <h1>Pixel Art Editor</h1>
+
+    <div class="form-container">
+      <div class="form-item">
+        <label for="quantity-of-pixels">
+          Количество ячеек:
+          <input
+            type="number"
+            id="quantity-of-pixels"
+            value="10"
+            min="5"
+            max="50"
+            step="5"
+          />
+        </label>
+      </div>
+
+      <div class="form-item">
+        <label for="size-of-pixel">
+          Размер ячеек:
+          <input
+            type="number"
+            id="size-of-pixel"
+            value="20"
+            min="10"
+            max="50"
+            step="10"
+          />
+        </label>
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <div id="color-picker-container"></div>
+      <div id="pixels-container"></div>
+    </div>
+
+    <div>
+      <button id="clear-button">Очистить</button>
+      <button id="grid-toggle-button">Сетка</button>
+    </div>
+  </body>
+</html>
