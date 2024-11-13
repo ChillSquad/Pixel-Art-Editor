@@ -1,9 +1,11 @@
-const colorPickerContainer = document.getElementById("color-picker-container");
-const pixelsContainer = document.getElementById("pixels-container");
-const quantityOfPixelsInput = document.getElementById("quantity-of-pixels");
-const sizeOfPixelInput = document.getElementById("size-of-pixel");
 const clearButton = document.getElementById("clear-button");
+const sizeOfPixelInput = document.getElementById("size-of-pixel");
+const pixelsContainer = document.getElementById("pixels-container");
 const gridToggleButton = document.getElementById("grid-toggle-button");
+const quantityOfPixelsInput = document.getElementById("quantity-of-pixels");
+const colorPickerContainer = document.getElementById("color-picker-container");
+
+/* Палитра цветов */
 
 const colors = {
   white: "#ffffff",
@@ -17,6 +19,8 @@ const colors = {
   purple: "#800080",
   pink: "#ffc0cb",
 };
+
+/* Значения по умолчанию */
 
 let pixelSize = parseInt(sizeOfPixelInput.value) || 20;
 let quantityOfPixels = parseInt(quantityOfPixelsInput.value) || 10;
@@ -112,29 +116,20 @@ function refreshPixelsContainer() {
   createPixelsContainer(pixelsContainer, quantityOfPixels, pixelSize);
 }
 
-function clearPixels() {
-  const pixels = document.querySelectorAll(".pixel");
-  pixels.forEach((pixel) => (pixel.style.backgroundColor = ""));
-}
-
-function toggleGrid() {
-  gridVisible = !gridVisible;
-  const pixels = document.querySelectorAll(".pixel");
-  pixels.forEach((pixel) =>
-    gridVisible
-      ? pixel.classList.remove("no-border")
-      : pixel.classList.add("no-border")
-  );
-}
-
 window.addEventListener("load", () => {
   createColorPickerContainer(colorPickerContainer, colors);
+
   createPixelsContainer(pixelsContainer, quantityOfPixels, pixelSize);
 
-  document
-    .querySelector(`.color-pick[style="background-color: ${selectedColor};"]`)
-    .classList.add("selected-color");
+  const selectedColorElement = document.querySelector(
+    `.color-pick[style="background-color: ${selectedColor};"]`
+  );
+  if (selectedColorElement) {
+    selectedColorElement.classList.add("selected-color");
+  }
 });
+
+/* Количество ячеек */
 
 quantityOfPixelsInput.addEventListener("change", (e) => {
   const inputValue = parseInt(e.target.value);
@@ -149,6 +144,8 @@ quantityOfPixelsInput.addEventListener("change", (e) => {
   refreshPixelsContainer();
 });
 
+/* Размер ячеек */
+
 sizeOfPixelInput.addEventListener("change", (e) => {
   inputValue = parseInt(e.target.value);
 
@@ -162,5 +159,61 @@ sizeOfPixelInput.addEventListener("change", (e) => {
   refreshPixelsContainer();
 });
 
+/* Очистка сетки */
+
+function clearPixels() {
+  const pixels = document.querySelectorAll(".pixel");
+  pixels.forEach((pixel) => (pixel.style.backgroundColor = ""));
+}
+
 clearButton.addEventListener("click", clearPixels);
+
+/* Удаление сетки */
+
+function toggleGrid() {
+  gridVisible = !gridVisible;
+  const pixels = document.querySelectorAll(".pixel");
+  pixels.forEach((pixel) =>
+    gridVisible
+      ? pixel.classList.remove("no-border")
+      : pixel.classList.add("no-border")
+  );
+}
+
 gridToggleButton.addEventListener("click", toggleGrid);
+
+/* Сохранение изображения */
+
+const saveButton = document.getElementById("save-button");
+
+function saveAsPng() {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  const gridSize = quantityOfPixels * pixelSize;
+  canvas.width = gridSize;
+  canvas.height = gridSize;
+
+  const rows = pixelsContainer.querySelectorAll(".row");
+  rows.forEach((row, rowIndex) => {
+    const pixels = row.querySelectorAll(".pixel");
+
+    pixels.forEach((pixel, colIndex) => {
+      const color = window.getComputedStyle(pixel).backgroundColor;
+      context.fillStyle = color === "rgba(0, 0, 0, 0)" ? "#ffffff" : color;
+      context.fillRect(
+        colIndex * pixelSize,
+        rowIndex * pixelSize,
+        pixelSize,
+        pixelSize
+      );
+    });
+  });
+
+  const link = document.createElement("a");
+  link.download = "pixel-art.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+saveButton.addEventListener("click", saveAsPng);
